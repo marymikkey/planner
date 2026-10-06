@@ -1,0 +1,18 @@
+{
+  "name": "Планер — личная продуктивность",
+  "short_name": "Планер",
+  "description": "Спокойный планер для дней, привычек, самочувствия и денег. Работает офлайн; данные остаются на вашем устройстве.",
+  "start_url": "./index.html#/today",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f6f3ee",
+  "theme_color": "#f6f3ee",
+  "categories": ["productivity", "lifestyle"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

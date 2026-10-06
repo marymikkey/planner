@@ -1,0 +1,123 @@
+/* App shell, navigation and page-level grids. Mobile-first; desktop at >= 900px. */
+#app { min-height: 100vh; min-height: 100dvh; }
+
+.sidebar { display: none; }
+#main {
+  padding: calc(var(--safe-t) + 16px) 16px calc(var(--nav-h) + var(--safe-b) + 28px);
+  max-width: 1240px;
+  margin: 0 auto;
+}
+#main > * + * { margin-top: 16px; }
+
+.banner {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap;
+  padding: calc(var(--safe-t) + 8px) 16px 8px;
+  background: var(--accent-soft); color: var(--text); font-size: 0.85rem; text-align: center;
+  border-bottom: 1px solid var(--line);
+}
+
+/* Bottom navigation (phones) */
+.bottom-nav {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
+  display: grid; grid-template-columns: repeat(5, 1fr); align-items: center;
+  height: calc(var(--nav-h) + var(--safe-b)); padding-bottom: var(--safe-b);
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  border-top: 1px solid var(--line);
+}
+.bn-item {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  height: var(--nav-h); border: 0; background: none; color: var(--muted); font-size: 0.7rem; font-weight: 600; text-decoration: none;
+}
+.bn-item.active { color: var(--accent); }
+.bn-add {
+  justify-self: center; width: 54px; height: 54px; margin-top: -18px; border-radius: 50%; border: 0;
+  background: var(--accent); color: var(--accent-ink); display: grid; place-items: center;
+  box-shadow: 0 6px 18px rgba(31, 138, 112, 0.45);
+}
+.fab { display: none; }
+
+.more-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.more-item {
+  display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 16px 8px;
+  background: var(--surface-2); border-radius: var(--radius); color: var(--text); font-weight: 600; font-size: 0.85rem; text-align: center; min-height: 84px; justify-content: center;
+}
+.more-item:hover { text-decoration: none; background: var(--surface-3); }
+
+/* Page header */
+.page-head { display: grid; gap: 4px; }
+.page-head-row { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+.page-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.back-link { display: inline-flex; align-items: center; gap: 2px; font-size: 0.85rem; color: var(--muted); margin-bottom: 4px; }
+
+.today-head { display: grid; gap: 14px; }
+.today-head h1 { font-size: 2rem; }
+.goal { display: grid; gap: 4px; }
+.goal-input {
+  width: 100%; border: 0; border-bottom: 1px dashed var(--line-strong); background: transparent;
+  font-size: 1.12rem; padding: 6px 0; color: var(--text);
+}
+.goal-input::placeholder { color: var(--faint); }
+.goal-input:focus-visible { border-bottom-style: solid; border-color: var(--accent); outline: none; }
+
+.today-grid { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
+.today-grid > * { margin: 0; }
+.today-grid > .c-status { order: 1; } .today-grid > .c-tasks { order: 2; } .today-grid > .c-schedule { order: 3; } .today-grid > .c-routines { order: 4; } .today-grid > .c-week { order: 5; }
+
+.grid-2 { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
+.two-col { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); align-items: start; }
+.stack { display: grid; gap: 16px; align-content: start; }
+.stack > * { margin: 0; }
+.toolbar { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.planner-nav { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.nav-label { margin-left: 8px; font-size: 1.02rem; }
+.planner-day { display: grid; gap: 16px; }
+.side-panel { display: grid; gap: 16px; align-content: start; }
+
+.week-grid { display: grid; gap: 10px; grid-template-columns: 1fr; }
+
+@media (min-width: 700px) {
+  .week-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #main { padding-left: 24px; padding-right: 24px; }
+}
+
+@media (min-width: 900px) {
+  .sidebar {
+    display: flex; flex-direction: column; gap: 16px;
+    position: fixed; inset: 0 auto 0 0; width: 236px; padding: 22px 14px; overflow-y: auto;
+    border-right: 1px solid var(--line); background: var(--bg);
+  }
+  #main { margin-left: 236px; max-width: none; padding: 30px 36px 60px; }
+  #main > * { max-width: 1240px; margin-left: auto; margin-right: auto; }
+  .banner { margin-left: 236px; }
+  .bottom-nav { display: none; }
+  .fab {
+    display: grid; place-items: center; position: fixed; right: 28px; bottom: 28px; z-index: 30;
+    width: 56px; height: 56px; border-radius: 50%; border: 0; background: var(--accent); color: var(--accent-ink);
+    box-shadow: 0 8px 24px rgba(31, 138, 112, 0.45);
+  }
+  .fab:hover { background: var(--accent-hover); }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.1rem; padding: 0 8px; }
+  .brand-mark { width: 22px; height: 22px; border-radius: 7px; background: var(--accent); position: relative; }
+  .brand-mark::after { content: ""; position: absolute; inset: 6px; border-radius: 50%; background: var(--bg); }
+  .add-btn { justify-content: center; }
+  .sidebar nav { display: grid; gap: 2px; }
+  .nav-link { display: flex; align-items: center; gap: 12px; padding: 9px 12px; border-radius: 10px; color: var(--muted); font-weight: 560; }
+  .nav-link:hover { background: var(--surface-2); text-decoration: none; color: var(--text); }
+  .nav-link.active { background: var(--accent-soft); color: var(--text); }
+  .nav-link.active .ic { color: var(--accent); }
+
+  .today-grid { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); grid-template-areas: "tasks schedule" "routines schedule" "status week"; align-items: start; }
+  .today-grid > .c-tasks { grid-area: tasks; order: 0; } .today-grid > .c-schedule { grid-area: schedule; order: 0; } .today-grid > .c-routines { grid-area: routines; order: 0; }
+  .today-grid > .c-status { grid-area: status; order: 0; } .today-grid > .c-week { grid-area: week; order: 0; }
+  .two-col { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); }
+  .planner-day { grid-template-columns: minmax(0, 1.4fr) minmax(300px, 1fr); align-items: start; }
+  .today-head { grid-template-columns: auto minmax(260px, 560px); align-items: end; justify-content: space-between; gap: 32px; }
+}
+
+@media (min-width: 1200px) {
+  .week-grid { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+}

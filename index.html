@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Планер</title>
+  <meta name="description" content="Спокойный личный планер: данные хранятся только на вашем устройстве, без аккаунта и слежки.">
+  <!-- Privacy by construction: the page may only talk to its own origin, so user data cannot be sent elsewhere. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'">
+  <meta name="theme-color" content="#f6f3ee">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Планер">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <script src="js/theme-boot.js"></script>
+  <link rel="stylesheet" href="styles/base.css">
+  <link rel="stylesheet" href="styles/layout.css">
+  <link rel="stylesheet" href="styles/components.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <div id="app">
+    <div id="banner" class="banner" hidden></div>
+    <aside class="sidebar" id="sidebar" aria-label="Sidebar"></aside>
+    <main id="main" tabindex="-1"></main>
+    <nav class="bottom-nav" id="bottomnav" aria-label="Main"></nav>
+    <button class="fab" id="fab" type="button" aria-label="Quick add (n)"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+  </div>
+  <div id="overlay-root"></div>
+  <div id="toasts" aria-live="polite"></div>
+  <noscript><p style="padding:24px">Для работы приложения нужен JavaScript.</p></noscript>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
