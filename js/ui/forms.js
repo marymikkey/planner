@@ -200,7 +200,8 @@ export function openEventForm(initial = {}, { onSaved } = {}) {
     onSave: () => {
       const r = form.read();
       if (r.error) return invalid(...r.error);
-      onSaved?.(store.put('events', M.makeEvent(r.value)));
+      const saved = store.put('events', M.makeEvent(r.value)); // persist first: `onSaved?.(store.put())` would skip put() when onSaved is undefined
+      onSaved?.(saved);
     },
   });
 }
@@ -240,7 +241,8 @@ export function openRoutineForm(initial = {}, { onSaved } = {}) {
     onSave: () => {
       const r = form.read();
       if (r.error) return invalid(...r.error);
-      onSaved?.(store.put('routines', M.makeRoutine(r.value)));
+      const saved = store.put('routines', M.makeRoutine(r.value));
+      onSaved?.(saved);
     },
   });
 }
@@ -329,7 +331,12 @@ export function openMealForm(initial = {}, { onSaved } = {}) {
   formSheet({
     title: isNew ? 'Log a meal' : 'Edit meal', body: form.el, deleteLabel: 'Meal',
     onDelete: isNew ? null : () => store.remove('meals', initial.id),
-    onSave: () => { const r = form.read(); if (r.error) return invalid(...r.error); onSaved?.(store.put('meals', M.makeMeal(r.value))); },
+    onSave: () => {
+      const r = form.read();
+      if (r.error) return invalid(...r.error);
+      const saved = store.put('meals', M.makeMeal(r.value));
+      onSaved?.(saved);
+    },
   });
 }
 

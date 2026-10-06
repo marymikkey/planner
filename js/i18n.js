@@ -60,6 +60,7 @@ const RU = {
   'Monthly': 'Ежемесячно', 'Does not repeat': 'Не повторяется', 'Every day': 'Каждый день', 'Every weekday': 'По будням', 'Every week': 'Каждую неделю', 'Every month': 'Каждый месяц',
   'min': 'мин', 'kg': 'кг', 'kcal': 'ккал', 'g': 'г', 'pages': 'стр.', 'cups of coffee': 'чашек кофе', 'times per week': 'раз в неделю',
   // today
+  'New event': 'Новое событие', 'Edit event': 'Изменить событие', 'New class': 'Новое занятие', 'Edit class': 'Изменить занятие', 'New exam': 'Новый экзамен', 'Edit exam': 'Изменить экзамен',
   'Weekly goal': 'Цель недели', 'Set a goal for this week…': 'Поставьте цель на эту неделю…', 'Today’s tasks': 'Задачи на сегодня', 'Add a task for today…': 'Добавить задачу на сегодня…',
   'All clear for today. Nicely done.': 'На сегодня всё сделано. Отлично!', 'No tasks for today yet. Add one above, or pull something in from the Planner.': 'Задач на сегодня пока нет. Добавьте выше или возьмите что-нибудь из планера.',
   'Schedule': 'Расписание', 'Event': 'Событие', 'Today’s status': 'Состояние сегодня', 'Check in': 'Отметить', 'Edit check-in': 'Изменить отметку',

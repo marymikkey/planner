@@ -13,7 +13,7 @@
  */
 
 /*BEGIN GENERATED*/
-const CACHE_VERSION = '5c1c21c56d';
+const CACHE_VERSION = '3cc1864720';
 const PRECACHE = [
   "./",
   "./index.html",
