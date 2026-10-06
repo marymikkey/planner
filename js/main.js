@@ -7,6 +7,7 @@ import { materializeRecurringTx } from './core/actions.js';
 import { loadDemoData } from './core/demo.js';
 import { applyTheme } from './theme.js';
 import { todayISO } from './core/dates.js';
+import * as sync from './core/sync.js';
 import { setLang, lang, startI18n, tr } from './i18n.js';
 
 import * as today from './views/today.js';
@@ -139,6 +140,8 @@ async function boot() {
   buildNav();
   renderRoute();
   store.subscribe(scheduleRender);
+  sync.onStatus(() => { if (parseHash().route.slug === 'settings' && !document.querySelector('.sheet')) renderRoute(); });
+  sync.initSync();
   window.addEventListener('hashchange', renderRoute);
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => applyTheme(store.getSettings().theme));
 

@@ -72,6 +72,12 @@ export const DEFAULT_SETTINGS = {
   lastArea: 'Work',
 };
 
+// Settings that follow you across devices. Theme, language and onboarding stay per-device.
+export const SYNC_SETTING_KEYS = [
+  'dayStartMin', 'dayEndMin', 'weekStart', 'macros', 'currency', 'areaColors', 'personalCategories',
+  'mealTags', 'weeklyGoals', 'monthlyBudget', 'activityTarget',
+];
+
 export const areaColor = (area, settings) =>
   settings?.areaColors?.[area] || AREA_META[area]?.color || '#777';
 

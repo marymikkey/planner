@@ -67,14 +67,18 @@ Key decisions:
 ## Data, privacy, PWA
 
 - Storage: IndexedDB database `planner-local` (settings in the `settings` store). Only the theme name is mirrored to `localStorage` to avoid a flash on load.
-- No network calls except loading the app's own files. A Content-Security-Policy enforces this.
+- No network calls except loading the app's own files (and, only if you enable optional sync, encrypted requests to your Supabase project). A Content-Security-Policy enforces this.
 - Service worker: precaches everything on first load; afterwards serves from cache and refreshes in the background. **After changing any file run `node tools/build-sw.mjs`** so installed copies update.
 - Export JSON = lossless backup of everything (re-importable, replaces current data). Export CSV = one dataset at a time (tasks, events, routines, completions, health, meals, transactions, projects).
 - Reset removes everything on this device. No personal data is in the repo; demo data is fictional and generated in code.
+
+## Sync (optional)
+
+Cross-device sync through your own free Supabase project, end-to-end encrypted (AES-GCM, passphrase-derived key), last-write-wins per record, tombstones for deletes, offline outbox. Off by default; setup in `docs/SYNC_SETUP.md`. Code: `js/core/sync.js`; the store exposes `onMutation` and `applyRemote*` for it. Note: the page's CSP allows `connect-src https://*.supabase.co` for this; remove it if you never use sync.
 
 ## Known limitations / roadmap
 
 - Roadmap groups/topics can't be reordered by drag yet (order = creation order).
 - Moving a recurring event on the timeline changes its time for all occurrences.
 - Planned vs Actual: actual time is entered manually on a task.
-- Possible next steps: Supabase sync, reminders/notifications, per-occurrence exceptions for recurring items, task dependencies, weekly review screen, simple forecasting models on top of `buildDaily()`, automated tests.
+- Possible next steps: realtime sync (currently polls), reminders/notifications, per-occurrence exceptions for recurring items, task dependencies, weekly review screen, simple forecasting models on top of `buildDaily()`, automated tests.

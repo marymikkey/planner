@@ -137,7 +137,7 @@ export function materializeRecurringTx() {
     if (tpl.lastGenerated) cursor = step(tpl.lastGenerated);
     let last = tpl.lastGenerated;
     while (cursor && cursor <= today && guard++ < 400) {
-      out.push(makeTransaction({ date: cursor, type: tpl.type, amount: tpl.amount, categoryId: tpl.categoryId, description: tpl.description, note: tpl.note, recurring: true, templateId: tpl.id }));
+      out.push(makeTransaction({ id: `tx_${tpl.id}_${cursor}`, date: cursor, type: tpl.type, amount: tpl.amount, categoryId: tpl.categoryId, description: tpl.description, note: tpl.note, recurring: true, templateId: tpl.id }));
       last = cursor;
       cursor = step(cursor);
     }

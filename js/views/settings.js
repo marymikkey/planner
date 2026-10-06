@@ -1,5 +1,6 @@
 // Settings: appearance, planner range, units, customisation, and data management.
 import { h, toast, icon } from '../ui/dom.js';
+import { fmtDate } from '../core/dates.js';
 import * as store from '../core/store.js';
 import { AREAS, AREA_META, CURRENCIES } from '../core/models.js';
 import { fmtMin } from '../core/dates.js';
@@ -11,6 +12,7 @@ import { confirmDialog } from '../ui/modal.js';
 import { openMetricForm } from '../ui/forms.js';
 import { applyTheme } from '../theme.js';
 import { persistent } from '../core/db.js';
+import * as sync from '../core/sync.js';
 
 function tagEditor(values, onChange, placeholder) {
   const wrap = h('div', { class: 'chips' });
@@ -26,6 +28,7 @@ function tagEditor(values, onChange, placeholder) {
 }
 
 export function render(root, params, { rerender }) {
+  const renderAgain = rerender;
   const s = store.getSettings();
   root.append(PageHead('Settings', { sub: 'Everything stays on this device.' }));
 
@@ -78,6 +81,50 @@ export function render(root, params, { rerender }) {
         : h('p', { class: 'muted small' }, 'None yet.'),
       Btn('Add metric', () => openMetricForm({}), { kind: 'small', ic: 'plus' })));
 
+
+  // Sync (optional, end-to-end encrypted through the user's own Supabase project)
+  const syncCard = (() => {
+    const st = sync.status;
+    const stateText = { off: '', idle: 'Synced', syncing: 'Syncing…', offline: 'Offline — will retry', error: st.message || 'Sync error' }[st.state];
+    if (sync.isConnected()) {
+      const acc = sync.account();
+      const last = st.lastSync ? new Date(st.lastSync).toLocaleString(undefined, { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' }) : '—';
+      return Card('Sync', { sub: `Account: ${acc.email}` },
+        h('p', { class: st.state === 'error' ? 'notice' : 'muted' }, `${stateText} · Last sync: ${last}${sync.pendingCount() ? ` · waiting to send: ${sync.pendingCount()}` : ''}`),
+        h('div', { class: 'btn-row' },
+          Btn('Sync now', () => sync.syncNow(), { kind: 'primary' }),
+          Btn('Copy connection code', async () => { try { await navigator.clipboard.writeText(sync.makeConnectionCode()); toast('Code copied'); } catch { toast('Could not copy'); } }),
+          Btn('Disconnect', async () => { if (await confirmDialog('Sync stops on this device. Your data stays here and in the cloud.', { confirmLabel: 'Disconnect', title: 'Disconnect sync', danger: false })) sync.disconnect(); renderAgain(); }, { kind: 'danger-text' })),
+        h('p', { class: 'muted small' }, 'Data is encrypted on this device with your passphrase before it is uploaded. If you forget the passphrase, the cloud copy cannot be recovered.'));
+    }
+    const f = {
+      code: C.textInput('', { placeholder: 'Paste the code from your other device (optional)' }),
+      url: C.textInput('', { placeholder: 'https://xxxx.supabase.co' }),
+      key: C.textInput('', { placeholder: 'anon / publishable key' }),
+      email: C.textInput('', { type: 'email', placeholder: 'email' }),
+      pass: C.textInput('', { type: 'password', placeholder: 'Account password' }),
+      phrase: C.textInput('', { type: 'password', placeholder: 'Encryption passphrase' }),
+    };
+    f.email.input.setAttribute('autocomplete', 'email'); f.pass.input.setAttribute('autocomplete', 'current-password');
+    f.code.input.addEventListener('input', () => { const p = sync.parseConnectionCode(f.code.get()); if (p) { f.url.set(p.url); f.key.set(p.anonKey); } });
+    const go = async (signup) => {
+      try {
+        await sync.connect({ url: f.url.get(), anonKey: f.key.get(), email: f.email.get(), password: f.pass.input.value, passphrase: f.phrase.input.value, signup });
+        toast('Sync connected'); renderAgain();
+      } catch (e) { toast(e.message || String(e), { ms: 7000 }); }
+    };
+    return Card('Sync', { sub: 'Keep your phone and laptop in step. Optional and off by default.' },
+      h('p', { class: 'muted small' }, 'Uses your own free Supabase project (see docs/SYNC_SETUP.md). Everything is encrypted on your device before upload.'),
+      C.field('Connection code', f.code),
+      h('div', { class: 'row2' }, C.field('Project URL', f.url), C.field('Anon key', f.key)),
+      h('div', { class: 'row2' }, C.field('Email', f.email), C.field('Account password', f.pass)),
+      C.field('Encryption passphrase', f.phrase, { hint: 'Use the same passphrase on every device. It never leaves this device.' }),
+      h('div', { class: 'btn-row' }, Btn('Sign in & connect', () => go(false), { kind: 'primary' }), Btn('Create account & connect', () => go(true))),
+      h('details', { class: 'more' }, h('summary', null, 'SQL for the Supabase project'),
+        h('pre', { class: 'code', 'data-no-i18n': '' }, sync.SETUP_SQL),
+        Btn('Copy SQL', async () => { try { await navigator.clipboard.writeText(sync.SETUP_SQL); toast('SQL copied'); } catch { toast('Could not copy'); } }, { kind: 'small' })));
+  })();
+
   // Data
   const fileInput = h('input', { type: 'file', accept: 'application/json,.json', hidden: true, onChange: async (e) => {
     const f = e.target.files[0]; e.target.value = '';
@@ -86,22 +133,23 @@ export function render(root, params, { rerender }) {
     try { await importJSON(f); toast('Import complete'); } catch (err) { toast(`Import failed: ${err.message}`); }
   } });
   const csvKey = C.select(Object.entries(CSV_DATASETS).map(([k, d]) => ({ value: k, label: d.label })), 'tasks');
-  const data = Card('Data', { sub: persistent ? 'Stored in this browser (IndexedDB). Nothing is sent anywhere.' : 'Storage is unavailable in this browser mode, so data will not persist after closing. Export regularly.' },
+  const data = Card('Data', { sub: persistent ? (sync.isConnected() ? 'Stored in this browser (IndexedDB) and, encrypted, in your own cloud project.' : 'Stored in this browser (IndexedDB). Nothing is sent anywhere.') : 'Storage is unavailable in this browser mode, so data will not persist after closing. Export regularly.' },
     s.demo ? h('p', { class: 'notice' }, 'You are viewing synthetic demo data.') : null,
     h('div', { class: 'btn-row' }, Btn('Export JSON', exportJSON, { ic: 'arrow' }), Btn('Import JSON…', () => fileInput.click()), fileInput),
     h('div', { class: 'row2 align-end' }, C.field('CSV dataset', csvKey), Btn('Export CSV', () => exportCSV(csvKey.get()))),
     h('hr'),
     h('div', { class: 'btn-row' },
       Btn('Load demo data', async () => {
+        if (sync.isConnected()) { toast('Disconnect sync first: demo data would be uploaded to your cloud.', { ms: 6000 }); return; }
         if (!(await confirmDialog('This replaces your local data with fictional demo content. Export a backup first if you have real data.', { confirmLabel: 'Load demo', title: 'Load demo data', danger: false }))) return;
         await loadDemoData(); toast('Demo data loaded');
       }),
       Btn('Reset all data', async () => {
-        if (!(await confirmDialog('This permanently deletes everything stored on this device (tasks, health, finance, settings). Consider exporting a backup first.', { confirmLabel: 'Delete everything', title: 'Reset all data' }))) return;
+        if (!(await confirmDialog(sync.isConnected() ? 'Sync is on: this deletes your data on this device AND in the cloud (all devices). Consider exporting a backup first.' : 'This permanently deletes everything stored on this device (tasks, health, finance, settings). Consider exporting a backup first.', { confirmLabel: 'Delete everything', title: 'Reset all data' }))) return;
         await store.resetAll(); toast('All local data cleared');
       }, { kind: 'danger-text' })));
 
-  const about = Card('About & privacy', null, h('p', { class: 'muted' }, 'This app runs entirely in your browser. There is no account, no server and no analytics; your data never leaves this device unless you export it. It works offline once loaded and can be installed from the Share / browser menu.'));
+  const about = Card('About & privacy', null, h('p', { class: 'muted' }, 'This app runs entirely in your browser. There is no analytics and no server of ours. Your data stays on this device unless you export it or turn on optional sync, which uploads only encrypted data to your own Supabase project. It works offline once loaded and can be installed from the Share / browser menu.'));
 
-  root.append(h('div', { class: 'stack' }, appearance, planner, meals, finance, custom, data, about));
+  root.append(h('div', { class: 'stack' }, appearance, planner, meals, finance, custom, syncCard, data, about));
 }

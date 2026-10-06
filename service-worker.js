@@ -13,7 +13,7 @@
  */
 
 /*BEGIN GENERATED*/
-const CACHE_VERSION = '0a64a3dadf';
+const CACHE_VERSION = '5c1c21c56d';
 const PRECACHE = [
   "./",
   "./index.html",
@@ -32,6 +32,7 @@ const PRECACHE = [
   "./js/core/queries.js",
   "./js/core/recurrence.js",
   "./js/core/store.js",
+  "./js/core/sync.js",
   "./js/i18n.js",
   "./js/main.js",
   "./js/theme-boot.js",

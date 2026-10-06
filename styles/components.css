@@ -319,3 +319,5 @@ details.more[open] > summary { margin-bottom: 8px; }
 .corr-text p { margin-top: 2px; }
 .corr-result { display: grid; gap: 12px; }
 @media (max-width: 560px) { .corr-stats { grid-template-columns: auto auto; } .corr-text { grid-column: 1 / -1; } }
+
+.code { margin: 8px 0; padding: 12px; border-radius: 10px; background: var(--surface-2); font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; overflow-x: auto; white-space: pre; max-height: 260px; }
