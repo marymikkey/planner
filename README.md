@@ -6,6 +6,8 @@ A calm, local-first personal productivity app: daily & weekly planning, time blo
 
 Core loop: **Plan → Live → Track → Learn → Adjust.**
 
+Docs: [`docs/PROJECT_SPEC.md`](docs/PROJECT_SPEC.md) — full project specification (in Russian), [`docs/SYNC_SETUP.md`](docs/SYNC_SETUP.md) — cross-device sync setup.
+
 ## Run it
 
 ES modules and service workers need HTTP (not `file://`):
